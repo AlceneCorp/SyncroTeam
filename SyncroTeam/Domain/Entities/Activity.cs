@@ -1,4 +1,5 @@
 ﻿using SyncroTeam.Domain.Enumerations;
+using SyncroTeam.Domain.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SyncroTeam.Domain.Entities
 
         public ActivitySetting Settings { get; set; } = new();
 
-        public Agent AssignedAgent { get; set; } // nom de l'agent affecté
+        public String AssignedAgent { get; set; } // nom de l'agent affecté
 
         public DayOfWeek? Day { get; set; }
 
@@ -21,7 +22,7 @@ namespace SyncroTeam.Domain.Entities
 
         public Activity() { }
 
-        public Activity(string name, IEnumerable<DayOfWeek> allowedDays, IEnumerable<Agent> authorizedAgents)
+        public Activity(string name, IEnumerable<DayOfWeek> allowedDays, IEnumerable<String> authorizedAgents)
         {
             Name = name;
             Settings = new ActivitySetting(allowedDays, authorizedAgents);

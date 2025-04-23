@@ -1,12 +1,14 @@
 ﻿using SyncroTeam.Domain.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SyncroTeam.Domain.Entities
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class Days
     {
         public DayOfWeek DayOfWeek { get; set; }

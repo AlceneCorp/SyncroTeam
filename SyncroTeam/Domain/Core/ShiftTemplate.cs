@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SyncroTeam.Domain.Core
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class ShiftTemplate
     {
         public TimeOnly Start { get; set; }

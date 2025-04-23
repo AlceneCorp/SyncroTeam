@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using SyncroTeam.Domain.Enumerations;
 
 namespace SyncroTeam.Domain.Entities
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class DaySlot
     {
         public DayPeriod Period { get; set; }

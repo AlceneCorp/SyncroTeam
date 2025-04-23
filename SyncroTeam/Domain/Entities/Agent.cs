@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Xml.Serialization;
 
 namespace SyncroTeam.Domain.Entities
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class Agent
     {
         public string Name { get; set; }

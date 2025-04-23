@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SyncroTeam.Domain.Entities
+namespace SyncroTeam.Domain.Settings
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     /// <summary>
     /// Définit les règles d'affectation pour une activité :
     /// - Jours autorisés
     /// - Agents habilités à la réaliser
     /// </summary>
+
     public class ActivitySetting
     {
         /// <summary>
@@ -21,14 +24,15 @@ namespace SyncroTeam.Domain.Entities
         /// <summary>
         /// Liste des noms d'agents autorisés à effectuer cette activité
         /// </summary>
-        public List<String> AuthorizedAgents { get; set; } = new();
+        public List<string> AuthorizedAgents { get; set; } = new();
 
+        
         public ActivitySetting() { }
 
-        public ActivitySetting(IEnumerable<DayOfWeek> allowedDays, IEnumerable<String> authorizedAgents)
+        public ActivitySetting(IEnumerable<DayOfWeek> allowedDays, IEnumerable<string> authorizedAgents)
         {
             AllowedDays = new List<DayOfWeek>(allowedDays);
-            AuthorizedAgents = new List<String>(authorizedAgents);
+            AuthorizedAgents = (authorizedAgents == null) ? null : new List<String>(authorizedAgents);
         }
 
         /// <summary>
@@ -36,6 +40,8 @@ namespace SyncroTeam.Domain.Entities
         /// </summary>
         public bool IsAgentAuthorized(string agentName)
         {
+            // Si null => tous les agents sont autorisés
+            if(AuthorizedAgents == null) return true;
             return AuthorizedAgents.Any(agent => agent.Equals(agentName, StringComparison.OrdinalIgnoreCase));
         }
 

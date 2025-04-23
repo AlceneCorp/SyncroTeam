@@ -1,7 +1,9 @@
 ﻿using SyncroTeam.Domain.Entities;
 using SyncroTeam.Domain.Enumerations;
+using SyncroTeam.Domain.Settings;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SyncroTeam.Domain.Core
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class Company
     {
         public CompanySettings Settings { get; set; } = new();
@@ -22,6 +25,10 @@ namespace SyncroTeam.Domain.Core
 
         public List<DateOnly> PublicHolidays { get; set; } = new();
 
+        private Dictionary<string, int> _globalRotationIndexes = new();
+
+        private Dictionary<string, int> _activityRotations = new();
+
         public Company(String param_Name, String param_EditorPassword)
         {
             this.Settings.Name = param_Name;
@@ -31,43 +38,98 @@ namespace SyncroTeam.Domain.Core
 
         public void AssignActivitiesAutomatically()
         {
+            Dictionary<string, int> globalRotationIndexes = new();
+
             foreach(var week in this.Weeks)
             {
-                foreach(var day in week.Days)
+                Dictionary<string, Dictionary<string, int>> weeklyAssignmentCount = new();
+
+                var allActivities = week.Days
+                    .SelectMany(d => new[] { d.MorningPeriod, d.AfternoonPeriod })
+                    .Where(slot => slot?.Activities != null)
+                    .SelectMany(slot => slot.Activities)
+                    .Where(a => a.Settings != null)
+                    .GroupBy(a => a.Name);
+
+                foreach(var activityGroup in allActivities)
                 {
-                    var currentDate = week.Start.AddDays((int)day.DayOfWeek - (int)DayOfWeek.Monday);
-                    if(this.IsPublicHoliday(currentDate))
-                    {
-                        // Skip assignment for this holiday
+                    string activityName = activityGroup.Key;
+                    var activities = activityGroup.ToList();
+
+                    var template = this.Settings.ActivityTemplates.FirstOrDefault(t => t.Name == activityName);
+                    if(template == null)
                         continue;
-                    }
 
-                    HashSet<string> alreadyAssignedToday = new();
+                    bool isForEveryone = template.AuthorizedAgents == null;
 
-                    foreach(var slot in new[] { day.MorningPeriod, day.AfternoonPeriod })
+                    List<Agent> eligibleAgents = isForEveryone
+                        ? this.Agents
+                        : this.Agents.Where(a => template.AuthorizedAgents.Contains(a.Name)).ToList();
+
+                    if(eligibleAgents.Count == 0)
+                        continue;
+
+                    if(!weeklyAssignmentCount.ContainsKey(activityName))
+                        weeklyAssignmentCount[activityName] = new Dictionary<string, int>();
+
+                    if(!globalRotationIndexes.ContainsKey(activityName))
+                        globalRotationIndexes[activityName] = 0;
+
+                    int agentIndex = globalRotationIndexes[activityName];
+
+                    foreach(var activity in activities)
                     {
-                        if(slot.Activities == null || slot.Activities.Count == 0)
-                            continue;
-
-                        foreach(var activity in slot.Activities)
+                        if(isForEveryone)
                         {
-                            if(activity.AssignedAgent != null && slot.IsManualOverride)
-                                continue;
+                            activity.AssignedAgent = "ALL";
+                            continue;
+                        }
 
-                            foreach(var agent in this.Agents)
+                        Agent assignedAgent = null;
+                        int attempts = 0;
+
+                        while(attempts < eligibleAgents.Count)
+                        {
+                            var agent = eligibleAgents[agentIndex % eligibleAgents.Count];
+                            var agentName = agent.Name;
+
+                            int currentCount = weeklyAssignmentCount[activityName].ContainsKey(agentName)
+                                ? weeklyAssignmentCount[activityName][agentName]
+                                : 0;
+
+                            if(!template.MaxOccurrencesPerAgentPerWeek.HasValue ||
+                                currentCount < template.MaxOccurrencesPerAgentPerWeek.Value)
                             {
-                                if(activity.Settings.IsAgentAuthorized(agent.Name) && !alreadyAssignedToday.Contains(agent.Name))
-                                {
-                                    activity.AssignedAgent = agent;
-                                    alreadyAssignedToday.Add(agent.Name);
-                                    break;
-                                }
+                                assignedAgent = agent;
+                                break;
                             }
+
+                            agentIndex++;
+                            attempts++;
+                        }
+
+                        if(assignedAgent != null)
+                        {
+                            activity.AssignedAgent = assignedAgent.Name;
+
+                            if(!weeklyAssignmentCount[activityName].ContainsKey(assignedAgent.Name))
+                                weeklyAssignmentCount[activityName][assignedAgent.Name] = 0;
+
+                            weeklyAssignmentCount[activityName][assignedAgent.Name]++;
+                            agentIndex++;
+                        }
+                        else
+                        {
+                            activity.AssignedAgent = null;
                         }
                     }
+
+                    globalRotationIndexes[activityName] = agentIndex % eligibleAgents.Count;
                 }
             }
         }
+
+
 
         public void AddAgent(Agent param_Agent)
         {
@@ -130,6 +192,7 @@ namespace SyncroTeam.Domain.Core
             return this.Weeks.FirstOrDefault(w => param_Date >= w.Start && param_Date <= w.End);
         }
 
+
         public void AssignRotatingWeeklySchedule()
         {
             for(int weekIndex = 0; weekIndex < Weeks.Count; weekIndex++)
@@ -146,7 +209,7 @@ namespace SyncroTeam.Domain.Core
 
                         week.WeeklyShifts.Add(new WeeklyShift
                         {
-                            Agent = agent,
+                            Agent = agent.Name,
                             Start = shift.Start,
                             End = shift.End
                         });
@@ -166,7 +229,7 @@ namespace SyncroTeam.Domain.Core
                                     {
                                         if(activity.AssignedAgent == null)
                                         {
-                                            activity.AssignedAgent = agent;
+                                            activity.AssignedAgent = agent.Name;
                                             break;
                                         }
                                     }
@@ -185,7 +248,7 @@ namespace SyncroTeam.Domain.Core
                         {
                             if(activity.AssignedAgent == null)
                             {
-                                activity.AssignedAgent = rotatedAgents[0];
+                                activity.AssignedAgent = rotatedAgents[0].Name;
                                 break;
                             }
                         }
@@ -203,7 +266,7 @@ namespace SyncroTeam.Domain.Core
         private List<Agent> RotateAgents(List<Agent> param_agents, int param_shift)
         {
             int actualShift = param_shift % param_agents.Count;
-            return param_agents.Skip(actualShift).Concat(param_agents.Take(actualShift)).ToList();
+            return param_agents.Skip(param_agents.Count - actualShift).Concat(param_agents.Take(param_agents.Count - actualShift)).ToList();
         }
 
         public Weeks GetWeekByString(String param_weekText)
@@ -218,30 +281,32 @@ namespace SyncroTeam.Domain.Core
         {
             foreach(var day in week.Days)
             {
-                var currentDate = week.Start.AddDays((int)day.DayOfWeek - (int)DayOfWeek.Monday);
-                if(this.IsPublicHoliday(currentDate))
-                {
-                    // Skip generation for this holiday
-                    continue;
-                }
-
                 foreach(var template in Settings.ActivityTemplates)
                 {
+                    // On passe les activités non prévues ce jour-là
                     if(!template.Days.Contains(day.DayOfWeek))
                         continue;
 
                     foreach(var period in template.ValidPeriods)
                     {
+                        // Sélectionne le bon slot (matin/après-midi)
                         DaySlot slot = (period == DayPeriod.Morning) ? day.MorningPeriod : day.AfternoonPeriod;
 
-                        slot.Activities ??= new List<SyncroTeam.Domain.Entities.Activity>();
+                        if(slot.Activities == null)
+                            slot.Activities = new List<SyncroTeam.Domain.Entities.Activity>();
 
+                        // Évite de créer deux fois la même activité par erreur
+                        if(slot.Activities.Any(a => a.Name == template.Name))
+                            continue;
+
+                        // Création unique de l'activité
                         slot.Activities.Add(new SyncroTeam.Domain.Entities.Activity
                         {
                             Name = template.Name,
-                            Settings = template.ToActivitySetting(),
+                            Settings = new ActivitySetting(template.Days, template.AuthorizedAgents),
                             Day = day.DayOfWeek,
-                            Period = period
+                            Period = period,
+                            AssignedAgent = null // on le remplira plus tard
                         });
                     }
                 }
@@ -253,7 +318,7 @@ namespace SyncroTeam.Domain.Core
             return new SyncroTeam.Domain.Entities.Activity
             {
                 Name = original.Name,
-                Settings = new ActivitySetting(new List<DayOfWeek>(original.Settings.AllowedDays), new List<Agent>(original.Settings.AuthorizedAgents))
+                Settings = new ActivitySetting(new List<DayOfWeek>(original.Settings.AllowedDays), new List<String>(original.Settings.AuthorizedAgents))
             };
         }
 

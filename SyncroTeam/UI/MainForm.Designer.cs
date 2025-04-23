@@ -37,6 +37,10 @@
             comboBoxWeeks = new ComboBox();
             panelComboBox = new Panel();
             panelContent = new Panel();
+            fichierToolStripMenuItem = new ToolStripMenuItem();
+            outilsToolStripMenuItem = new ToolStripMenuItem();
+            debugToolStripMenuItem = new ToolStripMenuItem();
+            menuStrip1.SuspendLayout();
             panelNavigation.SuspendLayout();
             panelComboBox.SuspendLayout();
             SuspendLayout();
@@ -44,9 +48,10 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fichierToolStripMenuItem, outilsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1898, 24);
+            menuStrip1.Size = new Size(1898, 33);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -65,7 +70,7 @@
             panelNavigation.Controls.Add(btnActivites);
             panelNavigation.Controls.Add(btnHoraires);
             panelNavigation.Dock = DockStyle.Top;
-            panelNavigation.Location = new Point(0, 24);
+            panelNavigation.Location = new Point(0, 33);
             panelNavigation.Name = "panelNavigation";
             panelNavigation.Size = new Size(1898, 50);
             panelNavigation.TabIndex = 2;
@@ -129,7 +134,7 @@
             panelComboBox.BackColor = Color.Transparent;
             panelComboBox.Controls.Add(comboBoxWeeks);
             panelComboBox.Dock = DockStyle.Top;
-            panelComboBox.Location = new Point(0, 74);
+            panelComboBox.Location = new Point(0, 83);
             panelComboBox.Name = "panelComboBox";
             panelComboBox.Size = new Size(1898, 40);
             panelComboBox.TabIndex = 5;
@@ -138,10 +143,30 @@
             // 
             panelContent.BackColor = Color.White;
             panelContent.Dock = DockStyle.Fill;
-            panelContent.Location = new Point(0, 114);
+            panelContent.Location = new Point(0, 123);
             panelContent.Name = "panelContent";
-            panelContent.Size = new Size(1898, 832);
+            panelContent.Size = new Size(1898, 823);
             panelContent.TabIndex = 6;
+            // 
+            // fichierToolStripMenuItem
+            // 
+            fichierToolStripMenuItem.Name = "fichierToolStripMenuItem";
+            fichierToolStripMenuItem.Size = new Size(78, 29);
+            fichierToolStripMenuItem.Text = "&Fichier";
+            // 
+            // outilsToolStripMenuItem
+            // 
+            outilsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { debugToolStripMenuItem });
+            outilsToolStripMenuItem.Name = "outilsToolStripMenuItem";
+            outilsToolStripMenuItem.Size = new Size(74, 29);
+            outilsToolStripMenuItem.Text = "&Outils";
+            // 
+            // debugToolStripMenuItem
+            // 
+            debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+            debugToolStripMenuItem.Size = new Size(270, 34);
+            debugToolStripMenuItem.Text = "&Debug";
+            debugToolStripMenuItem.Click += debugToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -158,6 +183,8 @@
             MinimumSize = new Size(1920, 1024);
             Name = "MainForm";
             Text = "Form1";
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             panelNavigation.ResumeLayout(false);
             panelComboBox.ResumeLayout(false);
             ResumeLayout(false);
@@ -175,5 +202,8 @@
         private ComboBox comboBoxWeeks;
         private Panel panelComboBox;
         private Panel panelContent;
+        private ToolStripMenuItem fichierToolStripMenuItem;
+        private ToolStripMenuItem outilsToolStripMenuItem;
+        private ToolStripMenuItem debugToolStripMenuItem;
     }
 }

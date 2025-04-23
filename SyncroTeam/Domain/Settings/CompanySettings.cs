@@ -1,16 +1,19 @@
-﻿using System;
+﻿using SyncroTeam.Domain.Core;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SyncroTeam.Domain.Core
+namespace SyncroTeam.Domain.Settings
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class CompanySettings
     {
-        public String Name { get; set; }
+        public string Name { get; set; }
 
-        public String EditorPassword { get; set; }
+        public string EditorPassword { get; set; }
 
         
 
@@ -18,7 +21,8 @@ namespace SyncroTeam.Domain.Core
         {
             new ShiftTemplate(new TimeOnly(8, 0),  new TimeOnly(16, 30), 3),
             new ShiftTemplate(new TimeOnly(9, 0),  new TimeOnly(17, 30), 2),
-            new ShiftTemplate(new TimeOnly(9, 30), new TimeOnly(18, 0), 2)
+            new ShiftTemplate(new TimeOnly(9, 30), new TimeOnly(18, 0), 2),
+            new ShiftTemplate(new TimeOnly(8, 0), new TimeOnly(12, 0), 1)
         };
 
         public List<ActivityTemplate> ActivityTemplates { get; set; } = new();

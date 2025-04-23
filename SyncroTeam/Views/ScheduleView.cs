@@ -89,16 +89,16 @@ namespace SyncroTeam.Views
 
                 // Colonne Agent
                 int x1 = margin + col++ * colWidth;
-                Brush colorBrush = new SolidBrush(shift.Agent.Color);
+                Brush colorBrush = new SolidBrush(this._company.GetAgentByName(shift.Agent).Color);
                 g.FillRectangle(colorBrush, x1, startY, colWidth, rowHeight);
                 g.DrawRectangle(Pens.Black, x1, startY, colWidth, rowHeight);
-                g.DrawString(shift.Agent.Name, contentFont, Brushes.White, x1 + 10, startY + 10);
+                g.DrawString(this._company.GetAgentByName(shift.Agent).Name, contentFont, Brushes.White, x1 + 10, startY + 10);
 
 
                 // Colonne Commentaire
                 int x2 = margin + col * colWidth;
                 g.DrawRectangle(Pens.Black, x2, startY, colWidth, rowHeight);
-                g.DrawString(this.GetAgentComment(shift.Agent, _currentWeek), contentFont, Brushes.Gray, x2 + 10, startY + 10);
+                g.DrawString(this.GetAgentComment(this._company.GetAgentByName(shift.Agent), _currentWeek), contentFont, Brushes.Gray, x2 + 10, startY + 10);
 
                 startY += rowHeight;
             }

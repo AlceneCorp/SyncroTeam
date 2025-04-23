@@ -60,38 +60,51 @@ namespace SyncroTeam.Views
             var templates = _company.Settings.ActivityTemplates;
             var daysOfWeek = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
             var periods = new[] { DayPeriod.Morning, DayPeriod.Afternoon };
+            var dayOfWeekFr = new[] { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi" };
 
             int panelWidth = this.Width;
             int margin = 20;
             int titleOffset = 30;
             int topOffset = 100;
             int rowHeight = 40;
-            int headerHeight = 50;
+            int headerHeight = 60;
 
-            int totalCols = 1 + daysOfWeek.Length * periods.Length;
-            int colWidth = (panelWidth - 2 * margin) / totalCols;
+            int totalCols = 1 + daysOfWeek.Length * 2;
+            int firstColWidth = 300; // première colonne plus large
+            int remainingWidth = panelWidth - 2 * margin - firstColWidth;
+            int colWidth = remainingWidth / (totalCols - 1);
 
             // Titre
             string title = $"ACTIVITÉS QUOTIDIENNES - Semaine {_currentWeek.Number} : {_currentWeek.Start:dd/MM/yyyy} - {_currentWeek.End:dd/MM/yyyy}";
             g.DrawString(title, new Font("Arial", 16, FontStyle.Bold), Brushes.Black, margin, titleOffset);
 
-            // En-têtes colonnes
-            g.FillRectangle(Brushes.LightGray, margin, topOffset, colWidth, headerHeight);
-            g.DrawRectangle(Pens.Black, margin, topOffset, colWidth, headerHeight);
-            g.DrawString("Activités", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, margin + 5, topOffset + 15);
+            // Colonne "Activités"
+            g.FillRectangle(Brushes.LightGray, margin, topOffset, firstColWidth, headerHeight);
+            g.DrawRectangle(Pens.Black, margin, topOffset, firstColWidth, headerHeight);
+            g.DrawString("Activités", new Font("Arial", 10, FontStyle.Bold), Brushes.Black, margin + 5, topOffset + headerHeight / 3);
 
-            List<String> DayOfWeeksString = new() { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" };
+            // Ligne 1 : Jours fusionnés sur 2 colonnes
+            for(int d = 0; d < daysOfWeek.Length; d++)
+            {
+                int xDay = margin + firstColWidth + d * 2 * colWidth;
+                int widthSpan = 2 * colWidth;
+                g.FillRectangle(Brushes.LightGray, xDay, topOffset, widthSpan, headerHeight / 2);
+                g.DrawRectangle(Pens.Black, xDay, topOffset, widthSpan, headerHeight / 2);
+                g.DrawString(dayOfWeekFr[d], new Font("Arial", 12, FontStyle.Bold), Brushes.Black, xDay + 10, topOffset + 5);
+            }
 
+            // Ligne 2 : Périodes
             for(int d = 0; d < daysOfWeek.Length; d++)
             {
                 for(int p = 0; p < periods.Length; p++)
                 {
-                    int colIndex = 1 + d * 2 + p;
-                    int x = margin + colIndex * colWidth;
-                    string text = $"{DayOfWeeksString[d]}\n{(periods[p] == DayPeriod.Morning ? "Matin" : "Après-Midi")}";
-                    g.FillRectangle(Brushes.LightGray, x, topOffset, colWidth, headerHeight);
-                    g.DrawRectangle(Pens.Black, x, topOffset, colWidth, headerHeight);
-                    g.DrawString(text, new Font("Arial", 8, FontStyle.Bold), Brushes.Black, x + 5, topOffset + 10);
+                    int colIndex = d * 2 + p;
+                    int x = margin + firstColWidth + colIndex * colWidth;
+                    string label = (periods[p] == DayPeriod.Morning) ? "Matin" : "Après-Midi";
+
+                    g.FillRectangle(Brushes.LightGray, x, topOffset + headerHeight / 2, colWidth, headerHeight / 2);
+                    g.DrawRectangle(Pens.Black, x, topOffset + headerHeight / 2, colWidth, headerHeight / 2);
+                    g.DrawString(label, new Font("Arial", 8), Brushes.Black, x + 10, topOffset + headerHeight / 2 + 5);
                 }
             }
 
@@ -99,16 +112,18 @@ namespace SyncroTeam.Views
             int y = topOffset + headerHeight;
             foreach(var template in templates)
             {
-                g.FillRectangle(Brushes.WhiteSmoke, margin, y, colWidth, rowHeight);
-                g.DrawRectangle(Pens.Black, margin, y, colWidth, rowHeight);
+                // Colonne nom activité
+                g.FillRectangle(Brushes.WhiteSmoke, margin, y, firstColWidth, rowHeight);
+                g.DrawRectangle(Pens.Black, margin, y, firstColWidth, rowHeight);
                 g.DrawString(template.Name, new Font("Arial", 10, FontStyle.Bold), Brushes.Black, margin + 5, y + 10);
 
+                // Colonnes jour/période
                 for(int d = 0; d < daysOfWeek.Length; d++)
                 {
                     for(int p = 0; p < periods.Length; p++)
                     {
-                        int colIndex = 1 + d * 2 + p;
-                        int x = margin + colIndex * colWidth;
+                        int colIndex = d * 2 + p;
+                        int x = margin + firstColWidth + colIndex * colWidth;
                         var day = _currentWeek.Days.FirstOrDefault(day => day.DayOfWeek == daysOfWeek[d]);
                         if(day == null) continue;
 
@@ -120,15 +135,19 @@ namespace SyncroTeam.Views
 
                         if(activity?.AssignedAgent != null)
                         {
-                            var agent = activity.AssignedAgent;
-                            using var brush = new SolidBrush(agent.Color);
-                            g.FillRectangle(brush, x, y, colWidth, rowHeight);
-                            g.DrawString(agent.Name, new Font("Arial", 9, FontStyle.Bold), Brushes.White, x + 5, y + 10);
-                        }
-                        else if(template.AuthorizedAgents.Count == _company.Agents.Count)
-                        {
-                            g.FillRectangle(Brushes.DimGray, x, y, colWidth, rowHeight);
-                            g.DrawString("Tout le monde", new Font("Arial", 8, FontStyle.Bold), Brushes.White, x + 5, y + 10);
+                            if(activity.AssignedAgent == "ALL")
+                            {
+                                g.FillRectangle(Brushes.Black, x, y, colWidth, rowHeight);
+                                g.DrawString("Tout le monde", new Font("Arial", 8, FontStyle.Bold), Brushes.White, x + 5, y + 10);
+                            }
+                            else
+                            {
+                                var agent = activity.AssignedAgent;
+                                var foundAgent = this._company.GetAgentByName(agent);
+                                using var brush = new SolidBrush(foundAgent.Color);
+                                g.FillRectangle(brush, x, y, colWidth, rowHeight);
+                                g.DrawString(foundAgent.Name, new Font("Arial", 9, FontStyle.Bold), Brushes.White, x + 5, y + 10);
+                            }
                         }
                     }
                 }
@@ -136,6 +155,5 @@ namespace SyncroTeam.Views
                 y += rowHeight;
             }
         }
-
     }
 }

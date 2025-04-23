@@ -1,5 +1,12 @@
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\bin\Debug\net9.0-windows\SyncroTeam.exe
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\bin\Debug\net9.0-windows\SyncroTeam.deps.json
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\bin\Debug\net9.0-windows\SyncroTeam.runtimeconfig.json
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\bin\Debug\net9.0-windows\SyncroTeam.dll
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\bin\Debug\net9.0-windows\SyncroTeam.pdb
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.UI.Debug.DebugForm.resources
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.MainForm.resources
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ActivitiesView.resources
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.UI.Debug.DebugInspectorView.resources
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ScheduleView.resources
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ScreensView.resources
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.csproj.GenerateResource.cache
@@ -8,3 +15,8 @@ C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\Syncr
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.AssemblyInfo.cs
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.csproj.CoreCompileInputs.cache
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.sourcelink.json
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.dll
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\refint\SyncroTeam.dll
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.pdb
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.genruntimeconfig.cache
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\ref\SyncroTeam.dll

@@ -2,12 +2,17 @@
 using SyncroTeam.Domain.Entities;
 using SyncroTeam.Domain.Enumerations;
 using SyncroTeam.Objects;
+using SyncroTeam.UI.Debug;
 using SyncroTeam.Views;
+using System.Diagnostics;
 
 namespace SyncroTeam
 {
     public partial class MainForm : Form
     {
+
+        private DebugForm _debugForm;
+
         private Company _company;
 
         private ScheduleView _scheduleView;
@@ -37,7 +42,7 @@ namespace SyncroTeam
                 this._company.AddAgent(new Agent("Alexandre", Color.Orange));
                 this._company.AddAgent(new Agent("Philippe", Color.Blue));
                 this._company.AddAgent(new Agent("Amandine", Color.Violet));
-                this._company.AddAgent(new Agent("Thierry", Color.LightGoldenrodYellow));
+                this._company.AddAgent(new Agent("Thierry", Color.Chocolate));
                 this._company.AddAgent(new Agent("Emilien", Color.Pink));
 
                 this._company.InitializeDefaultFrenchHolidays(DateTime.Now.Year);
@@ -46,21 +51,22 @@ namespace SyncroTeam
 
 
 
-                
+
 
                 _company.Settings.ActivityTemplates.Add(new ActivityTemplate
                 {
                     Name = "Chat",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday },
                     ValidPeriods = new List<DayPeriod> { DayPeriod.Morning, DayPeriod.Afternoon },
-                    AuthorizedAgents = new List<Agent>
+                    MaxOccurrencesPerAgentPerWeek = 2,
+                    AuthorizedAgents = new List<String>
                     {
-                        _company.GetAgentByName("Emilien"),
-                        _company.GetAgentByName("Amandine"),
-                        _company.GetAgentByName("Jordan"),
-                        _company.GetAgentByName("Lucas"),
-                        _company.GetAgentByName("Thierry"),
-                        _company.GetAgentByName("Alexandre")
+                        "Emilien",
+                        "Amandine",
+                        "Jordan",
+                        "Lucas",
+                        "Philippe",
+                        "Alexandre"
                     }
                 });
 
@@ -69,7 +75,7 @@ namespace SyncroTeam
                     Name = "Tickets nouveaux / LED",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday },
                     ValidPeriods = new List<DayPeriod> { DayPeriod.Morning, DayPeriod.Afternoon },
-                    AuthorizedAgents = _company.Agents.ToList() // Tous les agents directement
+                    AuthorizedAgents = null //Tout le monde
                 });
 
                 _company.Settings.ActivityTemplates.Add(new ActivityTemplate
@@ -77,12 +83,12 @@ namespace SyncroTeam
                     Name = "Onboarding",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
                     ValidPeriods = new List<DayPeriod> { DayPeriod.Afternoon },
-                    AuthorizedAgents = new List<Agent>
+                    AuthorizedAgents = new List<String>
                     {
-                        _company.GetAgentByName("Jordan"),
-                        _company.GetAgentByName("Amandine"),
-                        _company.GetAgentByName("Alexandre"),
-                        _company.GetAgentByName("Emilien")
+                        "Jordan",
+                        "Amandine",
+                        "Alexandre",
+                        "Emilien"
                     }
                 });
 
@@ -91,37 +97,58 @@ namespace SyncroTeam
                     Name = "Havas / Passerelles",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday },
                     ValidPeriods = new List<DayPeriod> { DayPeriod.Morning, DayPeriod.Afternoon },
-                    AuthorizedAgents = new List<Agent>
+                    AuthorizedAgents = new List<String>
                     {
-                        _company.GetAgentByName("Thierry")
+                        "Thierry"
                     }
                 });
 
                 _company.Settings.ActivityTemplates.Add(new ActivityTemplate
                 {
-                    Name = "Mésidances et véhémence",
+                    Name = "Médisances et véhémence",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday },
                     ValidPeriods = new List<DayPeriod> { DayPeriod.Morning, DayPeriod.Afternoon },
-                    AuthorizedAgents = new List<Agent>
+                    MaxOccurrencesPerAgentPerWeek = 1,
+                    AuthorizedAgents = new List<String>
                     {
-                        _company.GetAgentByName("Jordan"),
-                        _company.GetAgentByName("Amandine"),
-                        _company.GetAgentByName("Lucas"),
-                        _company.GetAgentByName("Philippe"),
-                        _company.GetAgentByName("Alexandre"),
-                        _company.GetAgentByName("Emilien"),
-                        _company.GetAgentByName("Thierry")
+                        "Jordan",
+                        "Amandine",
+                        "Lucas",
+                        "Philippe",
+                        "Alexandre",
+                        "Emilien",
+                        "Thierry"
                     }
                 });
+
+                _company.Settings.ActivityTemplates.Add(new ActivityTemplate
+                {
+                    Name = "Activités du samedi",
+                    Days = new List<DayOfWeek> { DayOfWeek.Saturday },
+                    ValidPeriods = new List<DayPeriod> { DayPeriod.Morning },
+                    AuthorizedAgents = new List<string>
+                    {
+                        "Jordan",
+                        "Amandine",
+                        "Lucas",
+                        "Philippe",
+                        "Alexandre",
+                        "Emilien",
+                        "Thierry"
+                    }
+                });
+
+
 
                 _company.AssignRotatingWeeklySchedule();
 
                 foreach(var week in _company.Weeks)
                 {
                     _company.GenerateActivitiesFromTemplates(week);
+                    _company.AssignActivitiesAutomatically();
                 }
 
-                _company.AssignActivitiesAutomatically();
+                
 
                 XmlManager.SaveObject(this._company, "company_data.xml");
             }
@@ -145,7 +172,7 @@ namespace SyncroTeam
                 if(index >= 0)
                 {
                     comboBoxWeeks.SelectedIndex = index;
-                    
+
                 }
             }
 
@@ -182,6 +209,14 @@ namespace SyncroTeam
                 _activitiesView.LoadWeek(selectedWeek);
                 _currentWeek = selectedWeek;
             }
+        }
+
+        private void debugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this._debugForm = new DebugForm(this._company);
+            this._debugForm.ShowDialog();
+
+            XmlManager.SaveObject(this._company, "company_data.xml");
         }
     }
 }
