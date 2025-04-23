@@ -4,5 +4,14 @@
     <Compile Update="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Views\ActivitiesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\ScheduleView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\ScreensView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -9,29 +9,40 @@ namespace SyncroTeam.Domain.Entities
 {
     public class Agent
     {
-        public String Name { get; set; }
+        public string Name { get; set; }
 
-        public TimeOnly Start {  get; set; }
-
+        public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }
 
-        public String ColorHex { get; set; }
+        public string ColorHex { get; set; }
 
         [XmlIgnore]
         public Color Color
         {
-            get => ColorTranslator.FromHtml(ColorHex);
-            set => ColorHex = ColorTranslator.ToHtml(value);
+            get => ColorTranslator.FromHtml(NormalizeColorHex(ColorHex));
+            set => ColorHex = NormalizeColorToHex(value);
         }
 
         public Agent() { }
 
-        public Agent(String param_Name, TimeOnly param_Start, TimeOnly param_End, Color param_Color)
+        public Agent(string name, TimeOnly start, TimeOnly end, Color color)
         {
-            Name = param_Name;
-            Start = param_Start;
-            End = param_End;
-            Color = param_Color;
+            Name = name;
+            Start = start;
+            End = end;
+            Color = color;
+        }
+
+        private string NormalizeColorToHex(Color color)
+        {
+            return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        }
+
+        private string NormalizeColorHex(string hex)
+        {
+            if(!hex.StartsWith("#") && Color.FromName(hex).IsKnownColor)
+                return ColorTranslator.ToHtml(Color.FromName(hex));
+            return hex;
         }
     }
 }

@@ -10,8 +10,8 @@ namespace SyncroTeam.Domain.Entities
     public class DaySlot
     {
         public DayPeriod Period { get; set; }
-        public Activity Activity { get; set; }
-        public string AssignedAgent { get; set; } // nom de l'agent affecté
+        public List<Activity> Activities { get; set; } //List
+        
         public bool IsManualOverride { get; set; } // permet de tracer les changements manuels
 
         public DaySlot(DayPeriod period)

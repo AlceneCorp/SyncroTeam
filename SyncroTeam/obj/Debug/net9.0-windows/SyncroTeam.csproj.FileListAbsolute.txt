@@ -14,3 +14,7 @@ C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\refin
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.pdb
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.genruntimeconfig.cache
 C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\ref\SyncroTeam.dll
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.sourcelink.json
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ActivitiesView.resources
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ScheduleView.resources
+C:\Users\Admin\source\repos\SyncroTeam\SyncroTeam\obj\Debug\net9.0-windows\SyncroTeam.Views.ScreensView.resources

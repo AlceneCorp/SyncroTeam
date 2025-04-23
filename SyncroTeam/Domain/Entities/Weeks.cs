@@ -19,6 +19,8 @@ namespace SyncroTeam.Domain.Entities
 
         public Weeks() { }
 
+        public List<WeeklyShift> WeeklyShifts { get; set; } = new();
+
         public Weeks(DateOnly param_Start, DateOnly param_End, Int32 param_Number)
         {
             Start = param_Start;
@@ -40,5 +42,10 @@ namespace SyncroTeam.Domain.Entities
                 Days.Add(new Days(dayOfWeek));
             }
         }
+
+        public override string ToString() => $"{Start:dd/MM/yyyy} - {End:dd/MM/yyyy}";
+
+        
+        
     }
 }

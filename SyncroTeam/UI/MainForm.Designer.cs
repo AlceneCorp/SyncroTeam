@@ -28,12 +28,152 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            menuStrip1 = new MenuStrip();
+            statusStrip1 = new StatusStrip();
+            panelNavigation = new Panel();
+            btnEcrans = new Button();
+            btnActivites = new Button();
+            btnHoraires = new Button();
+            comboBoxWeeks = new ComboBox();
+            panelComboBox = new Panel();
+            panelContent = new Panel();
+            panelNavigation.SuspendLayout();
+            panelComboBox.SuspendLayout();
+            SuspendLayout();
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.ImageScalingSize = new Size(24, 24);
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(1898, 24);
+            menuStrip1.TabIndex = 0;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.ImageScalingSize = new Size(24, 24);
+            statusStrip1.Location = new Point(0, 946);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(1898, 22);
+            statusStrip1.TabIndex = 1;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // panelNavigation
+            // 
+            panelNavigation.Controls.Add(btnEcrans);
+            panelNavigation.Controls.Add(btnActivites);
+            panelNavigation.Controls.Add(btnHoraires);
+            panelNavigation.Dock = DockStyle.Top;
+            panelNavigation.Location = new Point(0, 24);
+            panelNavigation.Name = "panelNavigation";
+            panelNavigation.Size = new Size(1898, 50);
+            panelNavigation.TabIndex = 2;
+            // 
+            // btnEcrans
+            // 
+            btnEcrans.BackColor = Color.Transparent;
+            btnEcrans.Dock = DockStyle.Left;
+            btnEcrans.FlatStyle = FlatStyle.Flat;
+            btnEcrans.Font = new Font("Segoe UI", 12F);
+            btnEcrans.Location = new Point(239, 0);
+            btnEcrans.Name = "btnEcrans";
+            btnEcrans.Size = new Size(112, 50);
+            btnEcrans.TabIndex = 2;
+            btnEcrans.Text = "Écrans";
+            btnEcrans.UseVisualStyleBackColor = false;
+            btnEcrans.Click += btnEcrans_Click;
+            // 
+            // btnActivites
+            // 
+            btnActivites.BackColor = Color.Transparent;
+            btnActivites.Dock = DockStyle.Left;
+            btnActivites.FlatStyle = FlatStyle.Flat;
+            btnActivites.Font = new Font("Segoe UI", 12F);
+            btnActivites.Location = new Point(112, 0);
+            btnActivites.Name = "btnActivites";
+            btnActivites.Size = new Size(127, 50);
+            btnActivites.TabIndex = 1;
+            btnActivites.Text = "Activités";
+            btnActivites.UseVisualStyleBackColor = false;
+            btnActivites.Click += btnActivites_Click;
+            // 
+            // btnHoraires
+            // 
+            btnHoraires.BackColor = Color.Transparent;
+            btnHoraires.Dock = DockStyle.Left;
+            btnHoraires.FlatStyle = FlatStyle.Flat;
+            btnHoraires.Font = new Font("Segoe UI", 12F);
+            btnHoraires.Location = new Point(0, 0);
+            btnHoraires.Name = "btnHoraires";
+            btnHoraires.Size = new Size(112, 50);
+            btnHoraires.TabIndex = 0;
+            btnHoraires.Text = "Horaires";
+            btnHoraires.UseVisualStyleBackColor = false;
+            btnHoraires.Click += btnHoraires_Click;
+            // 
+            // comboBoxWeeks
+            // 
+            comboBoxWeeks.Dock = DockStyle.Fill;
+            comboBoxWeeks.Font = new Font("Segoe UI", 12F);
+            comboBoxWeeks.FormattingEnabled = true;
+            comboBoxWeeks.Location = new Point(0, 0);
+            comboBoxWeeks.Margin = new Padding(10, 5, 10, 5);
+            comboBoxWeeks.Name = "comboBoxWeeks";
+            comboBoxWeeks.Size = new Size(1898, 40);
+            comboBoxWeeks.TabIndex = 4;
+            comboBoxWeeks.SelectedIndexChanged += comboBoxWeeks_SelectedIndexChanged;
+            // 
+            // panelComboBox
+            // 
+            panelComboBox.BackColor = Color.Transparent;
+            panelComboBox.Controls.Add(comboBoxWeeks);
+            panelComboBox.Dock = DockStyle.Top;
+            panelComboBox.Location = new Point(0, 74);
+            panelComboBox.Name = "panelComboBox";
+            panelComboBox.Size = new Size(1898, 40);
+            panelComboBox.TabIndex = 5;
+            // 
+            // panelContent
+            // 
+            panelContent.BackColor = Color.White;
+            panelContent.Dock = DockStyle.Fill;
+            panelContent.Location = new Point(0, 114);
+            panelContent.Name = "panelContent";
+            panelContent.Size = new Size(1898, 832);
+            panelContent.TabIndex = 6;
+            // 
+            // MainForm
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1898, 968);
+            Controls.Add(panelContent);
+            Controls.Add(panelComboBox);
+            Controls.Add(panelNavigation);
+            Controls.Add(statusStrip1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            MaximumSize = new Size(1920, 1024);
+            MinimumSize = new Size(1920, 1024);
+            Name = "MainForm";
+            Text = "Form1";
+            panelNavigation.ResumeLayout(false);
+            panelComboBox.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private MenuStrip menuStrip1;
+        private StatusStrip statusStrip1;
+        private Panel panelNavigation;
+        private Button btnEcrans;
+        private Button btnActivites;
+        private Button btnHoraires;
+        private ComboBox comboBoxWeeks;
+        private Panel panelComboBox;
+        private Panel panelContent;
     }
 }
