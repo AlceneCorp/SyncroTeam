@@ -10,10 +10,6 @@ namespace SyncroTeam.Domain.Entities
     public class Agent
     {
         public string Name { get; set; }
-
-        public TimeOnly Start { get; set; }
-        public TimeOnly End { get; set; }
-
         public List<DateOnly> AbsentDays { get; set; } = new();
         public bool HasManualSchedule { get; set; } = false;
         public bool IsLockedToTask { get; set; } = false;
@@ -29,11 +25,9 @@ namespace SyncroTeam.Domain.Entities
 
         public Agent() { }
 
-        public Agent(string name, TimeOnly start, TimeOnly end, Color color)
+        public Agent(string name, Color color)
         {
             Name = name;
-            Start = start;
-            End = end;
             Color = color;
         }
 

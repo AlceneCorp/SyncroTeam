@@ -14,6 +14,8 @@ namespace SyncroTeam
         private ActivitiesView _activitiesView;
         private ScreensView _screensView;
 
+        private Weeks _currentWeek;
+
         public MainForm()
         {
             InitializeComponent();
@@ -24,23 +26,27 @@ namespace SyncroTeam
 
 
 
+
+
             if(!File.Exists("company_data.xml"))
             {
                 this._company = new Company("Peach_Harem", "232323");
 
-                this._company.Settings.InitializeDefaultFrenchHolidays(DateTime.Now.Year);
+                this._company.AddAgent(new Agent("Jordan", Color.Red));
+                this._company.AddAgent(new Agent("Lucas", Color.DarkGreen));
+                this._company.AddAgent(new Agent("Alexandre", Color.Orange));
+                this._company.AddAgent(new Agent("Philippe", Color.Blue));
+                this._company.AddAgent(new Agent("Amandine", Color.Violet));
+                this._company.AddAgent(new Agent("Thierry", Color.LightGoldenrodYellow));
+                this._company.AddAgent(new Agent("Emilien", Color.Pink));
+
+                this._company.InitializeDefaultFrenchHolidays(DateTime.Now.Year);
 
                 this._company.GenerateWeeksForYear(DateTime.Now.Year);
 
 
 
-                this._company.AddAgent(new Agent("Jordan", new TimeOnly(), new TimeOnly(), Color.Red));
-                this._company.AddAgent(new Agent("Lucas", new TimeOnly(), new TimeOnly(), Color.DarkGreen));
-                this._company.AddAgent(new Agent("Alexandre", new TimeOnly(), new TimeOnly(), Color.Orange));
-                this._company.AddAgent(new Agent("Philippe", new TimeOnly(), new TimeOnly(), Color.Blue));
-                this._company.AddAgent(new Agent("Amandine", new TimeOnly(), new TimeOnly(), Color.Violet));
-                this._company.AddAgent(new Agent("Thierry", new TimeOnly(), new TimeOnly(), Color.LightGoldenrodYellow));
-                this._company.AddAgent(new Agent("Emilien", new TimeOnly(), new TimeOnly(), Color.Pink));
+                
 
                 _company.Settings.ActivityTemplates.Add(new ActivityTemplate
                 {
@@ -84,7 +90,7 @@ namespace SyncroTeam
                 {
                     Name = "Havas / Passerelles",
                     Days = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday },
-                    ValidPeriods = new List<DayPeriod> { DayPeriod.Morning },
+                    ValidPeriods = new List<DayPeriod> { DayPeriod.Morning, DayPeriod.Afternoon },
                     AuthorizedAgents = new List<Agent>
                     {
                         _company.GetAgentByName("Thierry")
@@ -126,14 +132,15 @@ namespace SyncroTeam
             comboBoxWeeks.DisplayMember = "ToString"; // utilise la méthode ToString() du Week
 
 
-            Weeks currentWeek = _company.GetWeekForDate(DateOnly.FromDateTime(DateTime.Today));
+            _currentWeek = _company.GetWeekForDate(DateOnly.FromDateTime(DateTime.Today));
 
-            _scheduleView.LoadData(_company, currentWeek);
+            _scheduleView.LoadData(_company, _currentWeek);
+            _activitiesView.LoadData(_company, _currentWeek);
 
-            if(currentWeek != null)
+            if(_currentWeek != null)
             {
 
-                Int32 index = comboBoxWeeks.Items.IndexOf(currentWeek);
+                Int32 index = comboBoxWeeks.Items.IndexOf(_currentWeek);
 
                 if(index >= 0)
                 {
@@ -172,6 +179,8 @@ namespace SyncroTeam
             if(comboBoxWeeks.SelectedItem is Weeks selectedWeek)
             {
                 _scheduleView.LoadWeek(selectedWeek);
+                _activitiesView.LoadWeek(selectedWeek);
+                _currentWeek = selectedWeek;
             }
         }
     }

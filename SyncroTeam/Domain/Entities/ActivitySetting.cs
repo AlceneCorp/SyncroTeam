@@ -21,14 +21,14 @@ namespace SyncroTeam.Domain.Entities
         /// <summary>
         /// Liste des noms d'agents autorisés à effectuer cette activité
         /// </summary>
-        public List<Agent> AuthorizedAgents { get; set; } = new();
+        public List<String> AuthorizedAgents { get; set; } = new();
 
         public ActivitySetting() { }
 
-        public ActivitySetting(IEnumerable<DayOfWeek> allowedDays, IEnumerable<Agent> authorizedAgents)
+        public ActivitySetting(IEnumerable<DayOfWeek> allowedDays, IEnumerable<String> authorizedAgents)
         {
             AllowedDays = new List<DayOfWeek>(allowedDays);
-            AuthorizedAgents = new List<Agent>(authorizedAgents);
+            AuthorizedAgents = new List<String>(authorizedAgents);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace SyncroTeam.Domain.Entities
         /// </summary>
         public bool IsAgentAuthorized(string agentName)
         {
-            return AuthorizedAgents.Any(agent => agent.Name.Equals(agentName, StringComparison.OrdinalIgnoreCase));
+            return AuthorizedAgents.Any(agent => agent.Equals(agentName, StringComparison.OrdinalIgnoreCase));
         }
 
 

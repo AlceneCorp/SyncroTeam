@@ -193,7 +193,9 @@ namespace SyncroTeam.Domain.Core
 
                     // Aucune activité prévue pour l'après-midi le samedi
                     if(saturday.AfternoonPeriod?.Activities != null)
+                    {
                         saturday.AfternoonPeriod.Activities.Clear();
+                    } 
                 }
             }
         }
@@ -255,7 +257,7 @@ namespace SyncroTeam.Domain.Core
             };
         }
 
-        public void AddActivityTemplate(string name, IEnumerable<DayOfWeek> days, IEnumerable<Agent> authorizedAgents)
+        public void AddActivityTemplate(string name, IEnumerable<DayOfWeek> days, IEnumerable<String> authorizedAgents)
         {
             if(string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Le nom de l'activité ne peut pas être vide.");
@@ -293,7 +295,7 @@ namespace SyncroTeam.Domain.Core
             return false;
         }
 
-        public bool UpdateActivityTemplate(string name, IEnumerable<DayOfWeek> newDays, IEnumerable<Agent> newAgents)
+        public bool UpdateActivityTemplate(string name, IEnumerable<DayOfWeek> newDays, IEnumerable<String> newAgents)
         {
             var existing = Settings.ActivityTemplates
                 .FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -333,10 +335,7 @@ namespace SyncroTeam.Domain.Core
                 new DateOnly(year, 12, 25),  // Noël
             };
 
-            this.Agents.ForEach(agent => 
-            { 
-                agent.AbsentDays.AddRange(holidays);
-            });
+            
 
             // Calculs basés sur la date de Pâques
             DateTime easter = GetEasterDate(year);
@@ -371,7 +370,13 @@ namespace SyncroTeam.Domain.Core
 
         public void InitializeDefaultFrenchHolidays(int year)
         {
-            this.PublicHolidays = GetFrenchPublicHolidays(year);
+            List<DateOnly> holidays = GetFrenchPublicHolidays(year);
+
+            this.Agents.ForEach(agent =>
+            {
+                agent.AbsentDays ??= new List<DateOnly>();
+                agent.AbsentDays.AddRange(holidays);
+            });
         }
     }
 }
