@@ -82,7 +82,7 @@ namespace SyncroTeam.Views
                 int col = 0;
 
                 // Colonne Horaires
-                string horaire = $"{shift.Start:hh\\:mm} - {shift.End:hh\\:mm}";
+                string horaire = $"{shift.Start.ToString()} - {shift.End.ToString()}";
                 int x0 = margin + col++ * colWidth;
                 g.DrawRectangle(Pens.Black, x0, startY, colWidth, rowHeight);
                 g.DrawString(horaire, contentFont, Brushes.Black, x0 + 10, startY + 10);
@@ -94,10 +94,11 @@ namespace SyncroTeam.Views
                 g.DrawRectangle(Pens.Black, x1, startY, colWidth, rowHeight);
                 g.DrawString(shift.Agent.Name, contentFont, Brushes.White, x1 + 10, startY + 10);
 
+
                 // Colonne Commentaire
                 int x2 = margin + col * colWidth;
                 g.DrawRectangle(Pens.Black, x2, startY, colWidth, rowHeight);
-                g.DrawString("-", contentFont, Brushes.Gray, x2 + 10, startY + 10);
+                g.DrawString(this.GetAgentComment(shift.Agent, _currentWeek), contentFont, Brushes.Gray, x2 + 10, startY + 10);
 
                 startY += rowHeight;
             }
@@ -107,6 +108,29 @@ namespace SyncroTeam.Views
         {
             _currentWeek = week;
             this.Invalidate(); // Redessine le contrôle
+        }
+
+        private string GetAgentComment(Agent agent, Weeks week)
+        {
+            var comments = new List<string>();
+
+            if(agent.AbsentDays != null)
+            {
+                var absences = agent.AbsentDays
+                    .Where(d => d >= week.Start && d <= week.End)
+                    .Select(d => d.ToString("dd/MM"));
+
+                if(absences.Any())
+                    comments.Add("En congés le " + string.Join(", ", absences));
+            }
+
+            if(agent.HasManualSchedule)
+                comments.Add("Horaire manuel");
+
+            if(agent.IsLockedToTask)
+                comments.Add("Affectation fixe");
+
+            return comments.Count > 0 ? string.Join(" | ", comments) : "-";
         }
     }
 }

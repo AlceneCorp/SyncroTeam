@@ -14,6 +14,10 @@ namespace SyncroTeam.Domain.Entities
         public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }
 
+        public List<DateOnly> AbsentDays { get; set; } = new();
+        public bool HasManualSchedule { get; set; } = false;
+        public bool IsLockedToTask { get; set; } = false;
+
         public string ColorHex { get; set; }
 
         [XmlIgnore]
