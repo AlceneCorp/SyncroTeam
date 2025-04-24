@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SyncroTeam")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f5f1d04b35445f6fcc7043439153963515e3340")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+385214e97a065ebf0cb2f34ac3322842346be4c5")]
 [assembly: System.Reflection.AssemblyProductAttribute("SyncroTeam")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyncroTeam")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

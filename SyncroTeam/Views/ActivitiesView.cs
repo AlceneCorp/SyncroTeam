@@ -74,9 +74,9 @@ namespace SyncroTeam.Views
             int remainingWidth = panelWidth - 2 * margin - firstColWidth;
             int colWidth = remainingWidth / (totalCols - 1);
 
-            // Titre
-            string title = $"ACTIVITÉS QUOTIDIENNES - Semaine {_currentWeek.Number} : {_currentWeek.Start:dd/MM/yyyy} - {_currentWeek.End:dd/MM/yyyy}";
-            g.DrawString(title, new Font("Arial", 16, FontStyle.Bold), Brushes.Black, margin, titleOffset);
+            string weekTitle = $"{_currentWeek.Start:dd/MM/yyyy} - {_currentWeek.End:dd/MM/yyyy}";
+            g.DrawString($"Activités Quotidiennes {_currentWeek.Number} : {weekTitle}", titleFont, Brushes.Black, margin, 20);
+
 
             // Colonne "Activités"
             g.FillRectangle(Brushes.LightGray, margin, topOffset, firstColWidth, headerHeight);

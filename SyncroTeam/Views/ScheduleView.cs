@@ -40,6 +40,12 @@ namespace SyncroTeam.Views
             this.Invalidate(); // Redessine
         }
 
+        public void LoadWeek(Weeks week)
+        {
+            _currentWeek = week;
+            this.Invalidate(); // Redessine le contrôle
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -138,11 +144,7 @@ namespace SyncroTeam.Views
             g.DrawString(this.GetAgentComment(_company.GetAgentByName(shift.Agent), _currentWeek), contentFont, Brushes.Gray, x2 + 10, y + 10);
         }
 
-        public void LoadWeek(Weeks week)
-        {
-            _currentWeek = week;
-            this.Invalidate(); // Redessine le contrôle
-        }
+        
 
         private string GetAgentComment(Agent agent, Weeks week)
         {

@@ -146,6 +146,7 @@ namespace SyncroTeam
 
             _scheduleView.LoadData(_company, _currentWeek);
             _activitiesView.LoadData(_company, _currentWeek);
+            _screensView.LoadData(_company, _currentWeek);
 
             if(_currentWeek != null)
             {

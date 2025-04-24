@@ -192,6 +192,58 @@ namespace SyncroTeam.Domain.Core
             return this.Weeks.FirstOrDefault(w => param_Date >= w.Start && param_Date <= w.End);
         }
 
+        public Dictionary<DayOfWeek, List<string>> GenerateMorningCheckAssignments(int weekNumber)
+        {
+            var result = new Dictionary<DayOfWeek, List<string>>();
+            var days = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+
+            // Récupère les agents éligibles pour les shifts de 08h00 à 16h30
+            var eligibleAgents = Weeks
+                .FirstOrDefault()?.WeeklyShifts
+                .Where(ws => ws.Start.Hour == 8 && ws.End.Hour == 16)
+                .Select(ws => ws.Agent)
+                .Distinct()
+                .ToList() ?? new List<string>();
+
+            if(eligibleAgents.Count < 3)
+            {
+                throw new InvalidOperationException("Pas assez d'agents à 08h00 pour planifier les checks.");
+            }
+
+            // Applique un roulement basé sur le numéro de la semaine
+            var rotatedAgents = eligibleAgents
+                .Skip(weekNumber % eligibleAgents.Count)
+                .Concat(eligibleAgents.Take(weekNumber % eligibleAgents.Count))
+                .ToList();
+
+            // Prépare les compteurs d’assignation
+            var assignmentCount = rotatedAgents.ToDictionary(agent => agent, agent => 0);
+            int agentIndex = 0;
+
+            foreach(var day in days)
+            {
+                var assignedToday = new List<string>();
+
+                for(int i = 0; i < 3; i++)
+                {
+                    // Trouve l'agent avec le moins d'assignations (et pas encore pris aujourd'hui)
+                    var next = rotatedAgents
+                        .Where(a => !assignedToday.Contains(a))
+                        .OrderBy(a => assignmentCount[a])
+                        .ThenBy(a => rotatedAgents.IndexOf(a)) // stabilité du tri
+                        .First();
+
+                    assignedToday.Add(next);
+                    assignmentCount[next]++;
+                }
+
+                result[day] = assignedToday;
+            }
+
+            return result;
+        }
+
+
 
         public void AssignRotatingWeeklySchedule()
         {
