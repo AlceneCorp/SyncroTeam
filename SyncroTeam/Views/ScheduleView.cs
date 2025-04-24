@@ -75,33 +75,67 @@ namespace SyncroTeam.Views
                 g.DrawString(headers[col], headerFont, Brushes.Black, x + 10, tableTop + 10);
             }
 
-            // Données agents de la semaine sélectionnée
+            // Données agents
             int startY = tableTop + rowHeight;
             foreach(var shift in _currentWeek.WeeklyShifts)
             {
+                // Horaires classiques de la semaine (hors samedi)
+                if(shift.Start != new TimeOnly(8, 0) || shift.End != new TimeOnly(12, 0))
+                {
+                    DrawShiftRow(g, shift, margin, colWidth, startY);
+                    startY += rowHeight;
+                }
+            }
+
+            // Ajout ligne spéciale "Samedi"
+            var saturdayShift = _currentWeek.WeeklyShifts
+                .FirstOrDefault(s => s.Start == new TimeOnly(8, 0) && s.End == new TimeOnly(12, 0));
+
+            if(saturdayShift != null)
+            {
                 int col = 0;
-
-                // Colonne Horaires
-                string horaire = $"{shift.Start.ToString()} - {shift.End.ToString()}";
                 int x0 = margin + col++ * colWidth;
-                g.DrawRectangle(Pens.Black, x0, startY, colWidth, rowHeight);
-                g.DrawString(horaire, contentFont, Brushes.Black, x0 + 10, startY + 10);
-
-                // Colonne Agent
                 int x1 = margin + col++ * colWidth;
-                Brush colorBrush = new SolidBrush(this._company.GetAgentByName(shift.Agent).Color);
+                int x2 = margin + col * colWidth;
+
+                // Horaires
+                g.DrawRectangle(Pens.Black, x0, startY, colWidth, rowHeight);
+                g.DrawString("Samedi 08h00 - 12h00", contentFont, Brushes.Black, x0 + 10, startY + 10);
+
+                // Agent
+                Brush colorBrush = new SolidBrush(_company.GetAgentByName(saturdayShift.Agent).Color);
                 g.FillRectangle(colorBrush, x1, startY, colWidth, rowHeight);
                 g.DrawRectangle(Pens.Black, x1, startY, colWidth, rowHeight);
-                g.DrawString(this._company.GetAgentByName(shift.Agent).Name, contentFont, Brushes.White, x1 + 10, startY + 10);
+                g.DrawString(saturdayShift.Agent, contentFont, Brushes.White, x1 + 10, startY + 10);
 
-
-                // Colonne Commentaire
-                int x2 = margin + col * colWidth;
+                // Commentaire
                 g.DrawRectangle(Pens.Black, x2, startY, colWidth, rowHeight);
-                g.DrawString(this.GetAgentComment(this._company.GetAgentByName(shift.Agent), _currentWeek), contentFont, Brushes.Gray, x2 + 10, startY + 10);
-
-                startY += rowHeight;
+                g.DrawString("-", contentFont, Brushes.DarkRed, x2 + 10, startY + 10);
             }
+        }
+
+        // Utilitaire : Dessin d’un shift normal
+        private void DrawShiftRow(Graphics g, WeeklyShift shift, int margin, int colWidth, int y)
+        {
+            int col = 0;
+            int x0 = margin + col++ * colWidth;
+            int x1 = margin + col++ * colWidth;
+            int x2 = margin + col * colWidth;
+
+            // Colonne Horaires
+            string horaire = $"{shift.Start:hh\\:mm} - {shift.End:hh\\:mm}";
+            g.DrawRectangle(Pens.Black, x0, y, colWidth, 40);
+            g.DrawString(horaire, contentFont, Brushes.Black, x0 + 10, y + 10);
+
+            // Colonne Agent
+            Brush colorBrush = new SolidBrush(_company.GetAgentByName(shift.Agent).Color);
+            g.FillRectangle(colorBrush, x1, y, colWidth, 40);
+            g.DrawRectangle(Pens.Black, x1, y, colWidth, 40);
+            g.DrawString(shift.Agent, contentFont, Brushes.White, x1 + 10, y + 10);
+
+            // Colonne Commentaire
+            g.DrawRectangle(Pens.Black, x2, y, colWidth, 40);
+            g.DrawString(this.GetAgentComment(_company.GetAgentByName(shift.Agent), _currentWeek), contentFont, Brushes.Gray, x2 + 10, y + 10);
         }
 
         public void LoadWeek(Weeks week)

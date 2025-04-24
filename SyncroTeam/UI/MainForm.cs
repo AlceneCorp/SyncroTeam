@@ -121,23 +121,6 @@ namespace SyncroTeam
                     }
                 });
 
-                _company.Settings.ActivityTemplates.Add(new ActivityTemplate
-                {
-                    Name = "Activités du samedi",
-                    Days = new List<DayOfWeek> { DayOfWeek.Saturday },
-                    ValidPeriods = new List<DayPeriod> { DayPeriod.Morning },
-                    AuthorizedAgents = new List<string>
-                    {
-                        "Jordan",
-                        "Amandine",
-                        "Lucas",
-                        "Philippe",
-                        "Alexandre",
-                        "Emilien",
-                        "Thierry"
-                    }
-                });
-
 
 
                 _company.AssignRotatingWeeklySchedule();

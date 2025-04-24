@@ -203,6 +203,10 @@ namespace SyncroTeam.Domain.Core
 
                 foreach(var shift in Settings.ShiftTemplates)
                 {
+                    // Ignorer le shift du samedi ici (on le traite plus bas)
+                    if(shift.AgentCount == 1 && shift.End.Hour == 12)
+                        continue;
+
                     for(int i = 0; i < shift.AgentCount && agentCursor < rotatedAgents.Count; i++, agentCursor++)
                     {
                         var agent = rotatedAgents[agentCursor];
@@ -220,7 +224,6 @@ namespace SyncroTeam.Domain.Core
                             if(isSaturday && (!Settings.EnableSaturdayShift || agentCursor != 0))
                                 continue;
 
-                            // Affectation à toutes les activités du créneau
                             foreach(var slot in new[] { day.MorningPeriod, day.AfternoonPeriod })
                             {
                                 if(slot.Activities != null)
@@ -239,29 +242,45 @@ namespace SyncroTeam.Domain.Core
                     }
                 }
 
-                var saturday = week.Days.FirstOrDefault(d => d.DayOfWeek == DayOfWeek.Saturday);
-                if(Settings.EnableSaturdayShift && saturday != null)
+                // Traitement spécifique du shift du samedi
+                if(Settings.EnableSaturdayShift)
                 {
-                    if(saturday.MorningPeriod.Activities != null)
+                    var saturdayShift = Settings.ShiftTemplates.FirstOrDefault(s => s.AgentCount == 1 && s.End.Hour == 12);
+                    if(saturdayShift != null)
                     {
-                        foreach(var activity in saturday.MorningPeriod.Activities)
+                        var saturday = week.Days.FirstOrDefault(d => d.DayOfWeek == DayOfWeek.Saturday);
+                        if(saturday != null)
                         {
-                            if(activity.AssignedAgent == null)
+                            var agent = week.WeeklyShifts.FirstOrDefault(w => w.Start == saturdayShift.Start && w.End == saturdayShift.End)?.Agent
+                                        ?? rotatedAgents[0].Name;
+
+                            week.WeeklyShifts.Add(new WeeklyShift
                             {
-                                activity.AssignedAgent = rotatedAgents[0].Name;
-                                break;
+                                Agent = agent,
+                                Start = saturdayShift.Start,
+                                End = saturdayShift.End
+                            });
+
+                            if(saturday.MorningPeriod.Activities != null)
+                            {
+                                foreach(var activity in saturday.MorningPeriod.Activities)
+                                {
+                                    if(activity.AssignedAgent == null)
+                                    {
+                                        activity.AssignedAgent = agent;
+                                        break;
+                                    }
+                                }
                             }
+
+                            // Supprimer les activités de l'après-midi le samedi
+                            saturday.AfternoonPeriod?.Activities?.Clear();
                         }
                     }
-
-                    // Aucune activité prévue pour l'après-midi le samedi
-                    if(saturday.AfternoonPeriod?.Activities != null)
-                    {
-                        saturday.AfternoonPeriod.Activities.Clear();
-                    } 
                 }
             }
         }
+
 
         private List<Agent> RotateAgents(List<Agent> param_agents, int param_shift)
         {
